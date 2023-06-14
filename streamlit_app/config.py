@@ -7,15 +7,30 @@ Config file for Streamlit App
 from member import Member
 
 
-TITLE = "My Awesome App"
+TITLE = "Catégorisation radios pulmoraires"
 
 TEAM_MEMBERS = [
     Member(
-        name="John Doe",
+        name="Hind",
         linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
         github_url="https://github.com/charlessutton",
     ),
-    Member("Jane Doe"),
+    Member(
+        name="Joao",
+        linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
+        github_url="https://github.com/charlessutton",
+    ),
+    Member(
+        name="Benjamin",
+        linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
+        github_url="https://github.com/charlessutton",
+    ),
+    Member(
+        name="N. Lebrun",
+        linkedin_url="https://www.linkedin.com/in/nina-lebrun-2b103485/",
+        github_url="https://github.com/charlessutton",
+    )
 ]
 
-PROMOTION = "Promotion Bootcamp Data Scientist - April 2021"
+PROMOTION = "Promotion Bootcamp Data Scientist - Avril 2023"
+

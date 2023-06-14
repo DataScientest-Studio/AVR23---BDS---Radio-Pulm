@@ -8,14 +8,19 @@ import config
 # TODO : you can (and should) rename and add tabs in the ./tabs folder, and import them here.
 from tabs import intro, second_tab, third_tab
 
+# A CHANGER EN LOCAL !!
+path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
+
 
 st.set_page_config(
     page_title=config.TITLE,
     page_icon="https://datascientest.com/wp-content/uploads/2020/03/cropped-favicon-datascientest-1-32x32.png",
 )
 
-with open("style.css", "r") as f:
+with open(path + "streamlit_app/style.css", "r") as f:
     style = f.read()
+
+
 
 st.markdown(f"<style>{style}</style>", unsafe_allow_html=True)
 
