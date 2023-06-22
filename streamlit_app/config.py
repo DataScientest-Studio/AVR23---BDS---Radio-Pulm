@@ -26,7 +26,7 @@ TEAM_MEMBERS = [
         github_url="https://github.com/charlessutton",
     ),
     Member(
-        name="N. Lebrun",
+        name="Nina",
         linkedin_url="https://www.linkedin.com/in/nina-lebrun-2b103485/",
         github_url="https://github.com/charlessutton",
     )

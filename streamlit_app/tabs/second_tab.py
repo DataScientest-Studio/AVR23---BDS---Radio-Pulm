@@ -65,3 +65,5 @@ def run():
     )
 
     st.image(Image.open("assets/sample-image.jpg"))
+
+    st.write(pd.DataFrame(np.random.randn(100, 4), columns=list("ABCD")))
