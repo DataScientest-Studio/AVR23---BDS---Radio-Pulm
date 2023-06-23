@@ -92,13 +92,13 @@ def run():
 
 def image_processing_lenet(image_path):
     im = tf.keras.utils.load_img(image_path, target_size = (256, 256), color_mode= "grayscale" )
-    im = tf.keras.utils.img_to_array(im)/255
+    im = tf.keras.utils.img_to_array(im)/256
     im = np.expand_dims(im, axis = 0)
     return im
 
 def image_processing_effnet(image_path):
     im = tf.keras.utils.load_img(image_path, target_size = (240, 240), color_mode= "rgb" )
-    im = tf.keras.utils.img_to_array(im)/255
+    im = tf.keras.utils.img_to_array(im)/240
     im = np.expand_dims(im, axis = 0)
     return im
     
