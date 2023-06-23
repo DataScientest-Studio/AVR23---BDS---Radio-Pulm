@@ -13,58 +13,99 @@ title = "Test des modèles"
 sidebar_name = "Test des modèles"
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
 ID_DIR = 7
+labels = ["Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"]
 clean_label = { "Normal" : "Normal", "COVID" : "Covid", "Lung_Opacity" : "Lung Opacity", "Viral Pneumonia" : "Viral Pneumonia"}
 id_to_clean_label = { 0 : "Normal", 1 : "Covid", 2 : "Lung Opacity", 3 : "Viral Pneumonia"}
 
+
 def run():
     image_path = path + "streamlit_app/assets/filling_img.jpg"
-    no_image = True
+    image_name = None
     displayPrediction = False
-    
+    #Initialisation compteur de scores
+    if 'Lenet' not in st.session_state :
+        st.session_state['Lenet'] = 0
+    if 'VGG16' not in st.session_state :
+        st.session_state['VGG16'] = 0
+    if 'EfficientNetB1' not in st.session_state :
+        st.session_state['EfficientNetB1'] = 0
+    if 'Lenet_Total' not in st.session_state :
+        st.session_state['Lenet_Total'] = 0
+    if 'VGG16_Total' not in st.session_state :
+        st.session_state['VGG16_Total'] = 0
+    if 'EfficientNetB1_Total' not in st.session_state :
+        st.session_state['EfficientNetB1_Total'] = 0
 
+    # Titre
     st.title(title)
 
     # Paramétrage du test
     st.subheader("Choix image et modèles")
-    #st.markdown(
-    #"    """
-    #    Testez les différents modèles de reconnaissance sur des images exemples ou sur vos propres images.
-    #    """
-    #)
     col1, col2 = st.columns([0.3, 0.7])
          
     with col2:
-        #Choix de l'image
+        # Onglets
         tab1, tab2 = st.tabs(["Image existante", "Import d'une image"])
         
-        # Image existante
+        # Choix image existante
         with tab1:
-            chosen_image = st.selectbox(
-            "Choisissez une image à reconnaître",
-            ("Aucune", "image au hasard",
-             'Image 1 brute - Normal', 'Image 1 masquée - Normal',
-             'Image 2 brute - Covid', 'Image 2 masquée - Covid',
-             'Image 3 brute - Lung_Opacity', 'Image 3 masquée - Lung_Opacity',
-            'Image 4 brute - Viral Pneumonia', 'Image 4 masquée - Viral Pneumonia'))
+
+            # Choix de catégorie
+            chosen_category = st.selectbox("Catégorie à reconnaître", ("Aucune","Peu importe !", "Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"))
+
+            # Choix image (selon catégorie)
+            if chosen_category == "Peu importe !" :
+                category = np.random.choice(labels)
+                image_name = category + "-" + str(np.random.randint(1, 1345)) +".png"
+            if chosen_category == "Normal" :
+                image_name_n = st.selectbox("Choix image",("Normal-1.png", "Normal-2.png", "Normal-3.png", "Normal-4.png"))
+                image_name = image_name_n
+                category = "Normal"
+            if chosen_category == "COVID" :
+                image_name_c = st.selectbox("Choix image",("COVID-1.png", "COVID-2.png", "COVID-3.png", "COVID-4.png"))
+                image_name = image_name_c
+                category = "COVID"
+            if chosen_category == "Lung_Opacity" :
+                image_name_lo = st.selectbox("Choix image",("Lung_Opacity-1.png", "Lung_Opacity-2.png", "Lung_Opacity-3.png", "Lung_Opacity-4.png"))
+                image_name = image_name_lo
+                category = "Lung_Opacity"
+            if chosen_category == "Viral Pneumonia" :
+                image_name_vp = st.selectbox("Choix image",("Viral Pneumonia-1.png", "Viral Pneumonia-2.png", "Viral Pneumonia-3.png", "Viral Pneumonia-4.png"))
+                image_name = image_name_vp
+                category = "Viral Pneumonia"
     
-        # Image importée
+        # Chargement image importée
         with tab2:
-            uploaded_image = st.file_uploader("Importez une image", type=['png', 'jpeg', 'jpg'])
+            image_name_up = st.file_uploader("Importez une image", type=['png', 'jpeg', 'jpg'])
 
-        
-        #Récupération de l'image correspondant au choix
-        if (chosen_image == "image au hasard") :
-            image_path = path + "data/COVID/images/COVID-2.png"
-
+        #Choix des modèles
         models = st.multiselect('Modèles à comparer',['Lenet', 'VGG16', 'EfficientNetB1'],['Lenet', 'VGG16', 'EfficientNetB1'])
-
+        
+        
+    # Colonne d'affichage de l'image
     with col1:
-        st.image(Image.open(image_path), output_format = "png")
-      
-    if (image_path != path + "streamlit_app/assets/filling_img.jpg" ) :
-        no_image = False
+        # Récupération image importée s'il y en a une
+        if (image_name_up is not None) :
+            image_path = image_name_up
+        # Sinon récupération image choisie s'il y en a une
+        else :
+            if (image_name is not None) :
+                image_path = path + "data/"+ category + "/images/" + image_name
 
-    if st.button("C'est grave docteur ?", type = "primary", disabled = no_image) :
+        # Affichage image à prédire
+        st.write(" ")
+        st.write(" ")
+        st.write(" ")
+        st.image(Image.open(image_path), output_format = "png")
+        if (image_path == image_name_up) :
+            st.write(image_name_up.name)
+        elif (image_name is not None) :
+            st.write(image_name)
+        elif (image_name is None) :
+            st.write("")
+
+    # Bouton de lancement des prédictions
+    if st.button("C'est grave docteur ?", type = "primary", disabled = (image_path == (path + "streamlit_app/assets/filling_img.jpg"))) :
         displayPrediction = True
     else :
         displayPrediction = False
@@ -72,41 +113,95 @@ def run():
 
     st.divider()  
 
-    # Affichage des prédictions des modèles
+    # Prédictions des modèles
     st.subheader("Prédictions")
     if displayPrediction :
         
-        label = image_path.split('/')[ID_DIR]
+        # Récupération de la catégorie réelle
+        if (image_name_up is None) :
+            label = clean_label[image_path.split('/')[ID_DIR]]
+        else :
+            label = "Inconnu (image importée)" #Si image importée, catégorie réelle inconnue
 
-        lenet = init_lenet((256,256,1))
-        effnet = init_effnet((240,240,3))
+        # Calcul des prédictions :
+        with st.spinner('Hmm, regardons cette radio...'):
+            # Initialisation des modèles
+            lenet, vgg16, effnet = init_models()
 
-        y_pred_lenet = np.argmax(lenet.predict(image_processing_lenet(image_path)))
-        y_pred_effnet = np.argmax(effnet.predict(image_processing_effnet(image_path)))
+            # Calcul des prédictions uniquement pour les modèles sélectionnées
+            modelName_to_model = { "Lenet" : lenet, "VGG16" : vgg16, "EfficientNetB1" : effnet}
+            preds = {}
+            for model in models :
+                preds[model] = np.argmax(modelName_to_model[model].predict(image_processing(image_path, model)))
 
-        st.write("Réel : ", clean_label[label])
-        st.write("Prédit Lenet : ", id_to_clean_label[y_pred_lenet])
-        st.write("Prédit EffNetB1 : ", id_to_clean_label[y_pred_effnet])
+        # Affichage des prédictions
+        colA1, colB1, colC1 = st.columns([0.3, 0.3, 0.4])
+        with colA1:
+            st.markdown("**Modèle**")
+        with colB1:
+            st.markdown("**Prédiction**")
+        with colC1:
+            st.markdown("Réalité :  **:blue[" + label + "]**")
+                
+        for pred in preds :
+            with st.container():
+                colA, colB, colC, colD = st.columns([0.3, 0.3, 0.2, 0.2])
+                with colA:
+                    st.markdown(pred)
+                with colB:
+                    st.markdown(id_to_clean_label[preds[pred]])
+                with colC:
+                    if (label == id_to_clean_label[preds[pred]]) :
+                        st.image(Image.open(path + "streamlit_app/assets/success.png"), output_format = "png")
+                        st.session_state[pred] += 1
+                        st.session_state[pred + "_Total"] += 1
+                    elif (label == "Inconnu (image importée)") :
+                        st.image(Image.open(path + "streamlit_app/assets/unknown.png"), output_format = "png")
+                    elif (label != id_to_clean_label[preds[pred]]) :
+                        st.image(Image.open(path + "streamlit_app/assets/fail.png"), output_format = "png")
+                        st.session_state[pred + "_Total"] += 1
+                with colD :
+                    st.write("**" + str(st.session_state[pred]) + "**/" + str(st.session_state[pred + "_Total"]))
 
 
 
-def image_processing_lenet(image_path):
-    im = tf.keras.utils.load_img(image_path, target_size = (256, 256), color_mode= "grayscale" )
-    im = tf.keras.utils.img_to_array(im)/256
+
+
+# FONCTIONS APPELEES
+###############################################################################################
+
+# Fonction de processing des images pour prédiction
+def image_processing(image_path, modelName):
+    if modelName == "Lenet" :
+        size = 256
+        color_mode = "grayscale"
+    elif modelName == "VGG16" :
+        size = 224
+        color_mode = "rgb"
+    elif modelName == "EfficientNetB1" :
+        size = 240
+        color_mode = "rgb"
+    im = tf.keras.utils.load_img(image_path, target_size = (size, size), color_mode= color_mode )
+    #im = tf.keras.utils.img_to_array(im)/size
     im = np.expand_dims(im, axis = 0)
     return im
 
-def image_processing_effnet(image_path):
-    im = tf.keras.utils.load_img(image_path, target_size = (240, 240), color_mode= "rgb" )
-    im = tf.keras.utils.img_to_array(im)/240
-    im = np.expand_dims(im, axis = 0)
-    return im
-    
 
-# Construction et compilation et chargement poids Le_net
+# Fonction d'initialisiation de tous les modèles
+@st.cache_resource
+def init_models() :
+    lenet = init_lenet((256,256,1))
+    vgg16 = init_vgg16()
+    effnet = init_effnet((240,240,3))
+    return lenet, vgg16, effnet
+
+
+# Fonction d'initialisation Le_net
 def init_lenet(size) :
+
     # Instanciation modèle séquentiel
     model = Sequential()
+
     # Ajout des différentes couches
     model.add(Conv2D(filters = 30 , kernel_size = (5,5), input_shape =size, activation = "relu"))
     model.add(MaxPooling2D(pool_size = (2,2)))
@@ -116,14 +211,37 @@ def init_lenet(size) :
     model.add(Dropout(rate = 0.2))
     model.add(Dense(units = 128, activation = "relu"))
     model.add(Dense(units = 4, activation = "softmax"))
+
     # Compilation
     model.compile(loss = "sparse_categorical_crossentropy", optimizer = "Adam", metrics = ["accuracy"])
     model.load_weights(path + "/data/models/model_lenet_2000im_30ep.h5")
     return model
 
+# Fonction d'initialisation VGG16
+def init_vgg16() :
+    base_model = VGG16(weights="imagenet", include_top = False)
+    for layer in base_model.layers :
+        layer.trainable = False
+
+    # Instanciation modèle séquentiel
+    model = Sequential()
+
+    # Ajout des différentes couches
+    model.add(base_model)
+    model.add(GlobalAveragePooling2D())
+    model.add(Dense(units = 1024, activation = "relu"))
+    model.add(Dropout(rate=0.2))
+    model.add(Dense(units = 512, activation = "relu"))
+    model.add(Dropout(rate=0.2))
+    model.add(Dense(units = 4, activation = "softmax"))
+
+    # Compilation
+    model.compile(loss = "sparse_categorical_crossentropy", optimizer = "Adam", metrics = ["accuracy"])
+    model.load_weights(path + "/data/models/model_vgg16_2000im_30ep_imnt.h5")
+    return model
+
+# Fonction d'initialisation EfficientNetB1
 def init_effnet(size) :
-    #Définition entrée du modèle
-    input_model = Input(shape = (240,240,3))
 
     #Chargement et freeze modèle de base Eficient Net
     base_model = EfficientNetB1(weights = 'imagenet', include_top=False, input_shape=size)
@@ -154,3 +272,8 @@ def init_effnet(size) :
     model.compile(loss = "sparse_categorical_crossentropy", optimizer = "Adam", metrics = ["accuracy"])
     model.load_weights(path + "/data/models/model_efnet1_func2_2000im_30ep.h5")
     return model
+
+# Fonction de comptage des scores
+@st.cache_resource
+def init_counts() :
+    return 0
