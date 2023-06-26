@@ -22,8 +22,8 @@ TEAM_MEMBERS = [
     ),
     Member(
         name="Benjamin",
-        linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
-        github_url="https://github.com/charlessutton",
+        linkedin_url="www.linkedin.com/in/benjamin-faustini-273b07196",
+        github_url="https://github.com/BFaustini",
     ),
     Member(
         name="Nina",
