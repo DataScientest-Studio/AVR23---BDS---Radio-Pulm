@@ -38,6 +38,7 @@ def run():
 
     # Titre
     st.title(title)
+    st.divider()
 
     # Paramétrage du test
     st.subheader("Choix image et modèles")
