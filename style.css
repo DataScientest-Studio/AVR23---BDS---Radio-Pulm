@@ -1,0 +1,86 @@
+h1,
+h2,
+h3,
+h4 {
+  color: #000000;
+}
+
+code {
+  color: #dce4e9;
+}
+
+#MainMenu {
+  display: none;
+}
+
+div[data-testid="stDecoration"] {
+  display: none;
+}
+
+footer {
+  display: none;
+}
+
+/* Radio buttons */
+
+.st-cc {
+  color: rgb(58, 120, 235);
+  font-weight: 500;
+}
+
+/* Sidebar */
+
+section[data-testid="stSidebar"] > div {
+  background-color: #f3f3f3; 
+  
+  padding-top: 2rem;
+  padding-left: 1.5rem;
+}
+
+section[data-testid="stSidebar"] button[title="View fullscreen"] {
+  display: none;
+}
+
+section[data-testid="stSidebar"] button[kind="icon"] {
+  display: none;
+}
+
+section[data-testid="stSidebar"] .st-bk {
+  background-color: rgba(235, 235, 235, 0);
+}
+
+section[data-testid="stSidebar"] .st-c0 {
+  background-color: rgba(255, 1, 1, 0);
+}
+
+section[data-testid="stSidebar"] hr {
+  margin-top: 30px;
+  border-color: rgb(26, 25, 25);
+  width: 50px;
+}
+
+section[data-testid="stSidebar"] h2 {
+  color: rgb(32, 31, 31);
+}
+
+/* Images */
+
+button[title="View fullscreen"] {
+  display: none;
+}
+
+/* hr */
+
+hr {
+  width: 200px;
+  border-width: 5px;
+  border-color: #ffffff;
+  margin-top: 0px;
+}
+
+/* First Page */
+
+section[tabindex="0"] .block-container {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
