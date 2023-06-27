@@ -12,8 +12,8 @@ from tensorflow.keras.applications import EfficientNetB1
 from tensorflow.keras.applications.vgg16 import VGG16
 
 
-title = "Exemples de tirages"
-sidebar_name = "Exemples de tirages"
+title = "Test par modèle"
+sidebar_name = "Test par modèle"
 
 # Constantes
 labels = ["Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"]
@@ -34,7 +34,7 @@ def run():
             grad_cam_On = st.checkbox("Afficher GradCam", value = True)
     with colC:
         image_type =st.radio("Type d'images", ("Images brutes", "Images masquées (poumons uniquement)"))
-        number = st.slider("Nombre d'images à tirer", min_value = 1, max_value = 15, value = 6, step = 1, format = "%g")
+        number = st.slider("Nombre d'images à tirer", min_value = 1, max_value = 15, value = 3, step = 1, format = "%g")
         
     
     if st.button("Lancer un tirage", type = "primary") :

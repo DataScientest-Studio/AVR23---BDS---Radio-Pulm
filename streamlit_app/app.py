@@ -6,7 +6,7 @@ import streamlit as st
 import config
 
 # TODO : you can (and should) rename and add tabs in the ./tabs folder, and import them here.
-from tabs import intro, second_tab, third_tab, test_nina, exemples_tirages
+from tabs import intro, test_nina, exemples_tirages
 
 # A CHANGER EN LOCAL !!
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
@@ -31,10 +31,8 @@ st.markdown(f"<style>{style}</style>", unsafe_allow_html=True)
 TABS = OrderedDict(
     [
         (intro.sidebar_name, intro),
-        (second_tab.sidebar_name, second_tab),
-        (third_tab.sidebar_name, third_tab),
-        (test_nina.sidebar_name, test_nina),
         (exemples_tirages.sidebar_name, exemples_tirages),
+        (test_nina.sidebar_name, test_nina),
     ]
 )
 

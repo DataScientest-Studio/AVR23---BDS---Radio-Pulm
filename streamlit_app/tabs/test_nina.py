@@ -9,9 +9,10 @@ from tensorflow.keras.applications import EfficientNetB1
 from tensorflow.keras.applications.vgg16 import VGG16
 
 
-title = "Test des modèles"
-sidebar_name = "Test des modèles"
+title = "Comparatif entre modèles"
+sidebar_name = "Comparatif entre modèles"
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
+
 ID_DIR = 7
 labels = ["Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"]
 clean_label = { "Normal" : "Normal", "COVID" : "Covid", "Lung_Opacity" : "Lung Opacity", "Viral Pneumonia" : "Viral Pneumonia"}
