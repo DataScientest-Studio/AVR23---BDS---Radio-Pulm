@@ -12,26 +12,29 @@ from tensorflow.keras.applications import EfficientNetB1
 from tensorflow.keras.applications.vgg16 import VGG16
 
 
-title = "Test par modèle"
-sidebar_name = "Test par modèle"
+title = "Test par Modèle"
+sidebar_name = "Test par Modèle"
 
-# Constantes
+# Dictionnaires
 labels = ["Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"]
 image_type_repo = { "Images brutes" : "images", "Images masquées (poumons uniquement)" : "masked_images"}
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
 id_to_label = { 0 : "Normal", 1 : "COVID", 2 : "Lung_Opacity", 3 : "Viral Pneumonia"}
+size_per_model = {"Lenet" : 256, "VGG16" : 224, "EfficientNetB1" : 240}
+color_per_model = {"Lenet" : 1, "VGG16" : 3, "EfficientNetB1" : 3}
 
 def run():
     # Instanciation variables
     displayPrediction = False
+    grad_cam_On = False
 
     st.title(title)
     st.divider()
     colA, colB, colC= st.columns((0.4,0.1,0.4))
     with colA:
         model_name = st.selectbox("Sélection du modèle", ['Lenet', 'VGG16', 'EfficientNetB1'], index = 2 )
-        if (model_name == "EfficientNetB1") :
-            grad_cam_On = st.checkbox("Afficher GradCam", value = True)
+        #if (model_name == "EfficientNetB1") :
+        grad_cam_On = st.checkbox("Afficher GradCam", value = True)
     with colC:
         image_type =st.radio("Type d'images", ("Images brutes", "Images masquées (poumons uniquement)"))
         number = st.slider("Nombre d'images à tirer", min_value = 1, max_value = 15, value = 3, step = 1, format = "%g")
@@ -56,42 +59,49 @@ def run():
             image_paths.append(image_path)
             label_names.append(label_name)
         df = pd.DataFrame(list(zip(image_paths, label_names)), columns = ['filepath', 'nameLabel'])
-        #st.write(df)
 
         # Chargement des poids du modèle (si pas fait avant)
         model = init_model(model_name, image_type_repo[image_type])
 
-        # Calcul prédictions
-        df["predicted"]= df["filepath"].apply(lambda x : id_to_label[np.argmax(model.predict(image_processing(x, model_name)))])
+        # Calcul prédictions pour toute les images
+        df["probas"] = df["filepath"].apply(lambda x : model.predict(image_processing(x, model_name)))
+        df["proba"]= df["probas"].apply(lambda x : np.max(x))
+        df["predicted"]= df["probas"].apply(lambda x : id_to_label[np.argmax(x)])
 
-        # Affichage image, catégorie et prédiction
+        # Affichage images, catégorie prédite et réelle
         nbCol = 3
         grid = st.columns(nbCol)
         col = 0
+
+        # Pour chacune des images du tirage
         for i in range(len(df)):
             with grid[col]:
-                col1, col2 = st.columns((0.1,0.9))
 
-                # Affichage icone vrai/faux
+                # Affichage catégorie prédite
+                st.markdown("Pred : **" + df["predicted"][i] + "** - _" + str(round(df["proba"][i]*100, 2)) + "%_")
+                
+                col1, col2 = st.columns((0.8,0.2))
+                
                 with col1 :
+                    # Affichage catégorie réelle
+                    st.markdown("Réalité :  **:blue[" + df["nameLabel"][i] + "]**")
+                    
+                with col2 :
+                    # Affichage icone vrai/faux
                     if (df["nameLabel"][i] == df["predicted"][i]) :
                         st.image(Image.open(path + "streamlit_app/assets/success.png"), output_format = "png")
                     else :
                         st.image(Image.open(path + "streamlit_app/assets/fail.png"), output_format = "png")
+                    
+                # Affichage image
+                st.image(Image.open(df["filepath"][i]), output_format = "png")
 
-                # Affichage label prédit et réel
-                with col2 :
-                    st.write("Prédiction :", df["nameLabel"][i])
-                    st.write("Réalité :", df["predicted"][i])
+                # Affichage  GradCam si sélectionné
+                if (grad_cam_On) :
+                    st.image(VizGradCAM(model, img_to_array(Image.open(df["filepath"][i]).resize((size_per_model[model_name],size_per_model[model_name]))), plot_results=True))
+                st.markdown('#')
 
-                # Affichage GradCam si effNet et sélectionné
-                if ((model_name == "EfficientNetB1") & grad_cam_On) :
-                    st.image(VizGradCAM(model, img_to_array(Image.open(df["filepath"][i]).resize((240,240))), plot_results=True))
-                # Affichage image sinon
-                else :
-                    st.image(Image.open(df["filepath"][i]), output_format = "png")
-                st.write("\n  \n \n")
-
+            # Décalage position colonne
             col = (col + 1) % nbCol
 
 
@@ -102,22 +112,19 @@ def run():
 @st.cache_resource
 def init_model(model, image_type) :
     if (model == 'Lenet') :
-        return init_lenet((256,256,1), image_type)
+        return init_lenet((size_per_model["Lenet"],size_per_model["Lenet"],color_per_model["Lenet"]), image_type)
     if (model == 'VGG16') :
-        return init_vgg16(image_type)
+        return init_vgg16((size_per_model["VGG16"],size_per_model["VGG16"],color_per_model["VGG16"]), image_type)
     if (model == 'EfficientNetB1') :
-        return init_effnet((240,240,3), image_type)
+        return init_effnet((size_per_model["EfficientNetB1"],size_per_model["EfficientNetB1"],color_per_model["EfficientNetB1"]), image_type)
     
 # Fonction de processing des images pour prédiction
 def image_processing(image_path, modelName):
-    if modelName == "Lenet" :
-        size = 256
+    size = size_per_model[modelName]
+    color = color_per_model[modelName]
+    if color == 1 :
         color_mode = "grayscale"
-    elif modelName == "VGG16" :
-        size = 224
-        color_mode = "rgb"
-    elif modelName == "EfficientNetB1" :
-        size = 240
+    elif color == 3 :
         color_mode = "rgb"
     im = tf.keras.utils.load_img(image_path, target_size = (size, size), color_mode= color_mode )
     #im = tf.keras.utils.img_to_array(im)/size
@@ -127,51 +134,74 @@ def image_processing(image_path, modelName):
 # Fonction d'initialisation Le_net
 def init_lenet(size, image_type) :
 
-    # Instanciation modèle séquentiel
-    model = Sequential()
+    input_model = Input(shape = size)
 
-    # Ajout des différentes couches
-    model.add(Conv2D(filters = 30 , kernel_size = (5,5), input_shape =size, activation = "relu"))
-    model.add(MaxPooling2D(pool_size = (2,2)))
-    model.add(Conv2D(filters = 16, kernel_size = (3,3), activation = "relu"))
-    model.add(MaxPooling2D(pool_size = (2,2)))
-    model.add(Flatten())
-    model.add(Dropout(rate = 0.2))
-    model.add(Dense(units = 128, activation = "relu"))
-    model.add(Dense(units = 4, activation = "softmax"))
+    # Création des différentes couches
+    conv2D1 = Conv2D(filters = 30 , kernel_size = (5,5), input_shape = size, activation = "relu")
+    maxpooling2D1 = MaxPooling2D(pool_size = (2,2))
+    conv2D2 = Conv2D(filters = 16, kernel_size = (3,3), activation = "relu")
+    maxpooling2D2 = MaxPooling2D(pool_size = (2,2))
+    flatten = Flatten()
+    dropout = Dropout(rate = 0.2)
+    dense1 = Dense(units = 128, activation = "relu")
+    dense2 = Dense(units = 4, activation = "softmax")
+
+    #Application des opérations
+    x = input_model
+    x = conv2D1(x)
+    x = maxpooling2D1(x)
+    x = conv2D2(x)
+    x = maxpooling2D2(x)
+    x = flatten(x)
+    x = dropout(x)
+    x = dense1(x)
+    output_model = dense2(x)
+
+    #Création du modèle
+    model = Model(inputs = input_model, outputs = output_model)
 
     # Compilation
     model.compile(loss = "sparse_categorical_crossentropy", optimizer = "Adam", metrics = ["accuracy"])
     if (image_type == "images") :
-        model.load_weights(path + "/data/models/model_lenet_2000im_30ep.h5")
+        model.load_weights(path + "/data/models/model_lenet_callbacks_2000img_functionnel.h5")
     else :
-        model.load_weights(path + "/data/models/model_lenet_2000imk_30ep.h5")
+        model.load_weights(path + "/data/models/model_lenet_callbacks_2000mkt_functionnel.h5")
     return model
 
 # Fonction d'initialisation VGG16
-def init_vgg16(image_type) :
-    base_model = VGG16(weights="imagenet", include_top = False)
+def init_vgg16(size, image_type) :
+
+    #Chargement et freeze modèle de base Efficient Net
+    base_model = VGG16(weights = 'imagenet', include_top = False, input_shape=size)
     for layer in base_model.layers :
         layer.trainable = False
 
-    # Instanciation modèle séquentiel
-    model = Sequential()
+    # Création des différentes couches
+    global_average = GlobalAveragePooling2D()
+    dense1 = Dense(units = 1024, activation = "relu")
+    dropout1 = Dropout(rate=0.2)
+    dense2 = Dense(units = 512, activation = "relu")
+    dropout2 = Dropout(rate=0.2)
+    dense3 = Dense(units = 4, activation = "softmax")
 
-    # Ajout des différentes couches
-    model.add(base_model)
-    model.add(GlobalAveragePooling2D())
-    model.add(Dense(units = 1024, activation = "relu"))
-    model.add(Dropout(rate=0.2))
-    model.add(Dense(units = 512, activation = "relu"))
-    model.add(Dropout(rate=0.2))
-    model.add(Dense(units = 4, activation = "softmax"))
+    # Application des opérations
+    x = base_model.output
+    x = global_average(x)
+    x = dense1(x)
+    x = dropout1(x)
+    x = dense2(x)
+    x = dropout2(x)
+    output_model = dense3(x)
+
+    # Création du modèle
+    model = Model(inputs = base_model.input, outputs = output_model)
 
     # Compilation
     model.compile(loss = "sparse_categorical_crossentropy", optimizer = "Adam", metrics = ["accuracy"])
     if (image_type == "images") :
-        model.load_weights(path + "/data/models/model_vgg16_2000im_30ep_imnt.h5")
+        model.load_weights(path + "/data/models/model_vgg16_callbacks_2000img_functionnel.h5")
     else :
-        model.load_weights(path + "/data/models/model_vgg_2000imk_30ep.h5")
+        model.load_weights(path + "/data/models/model_vgg16_callbacks_2000mkt_functionnel.h5")
     return model
 
 # Fonction d'initialisation EfficientNetB1
