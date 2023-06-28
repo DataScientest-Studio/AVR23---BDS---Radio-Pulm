@@ -9,8 +9,8 @@ from tensorflow.keras.applications import EfficientNetB1
 from tensorflow.keras.applications.vgg16 import VGG16
 
 
-title = "Comparatif entre modèles"
-sidebar_name = "Comparatif entre modèles"
+title = "Comparatif entre Modèles"
+sidebar_name = "Comparatif entre Modèles"
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
 
 ID_DIR = 7
@@ -132,12 +132,16 @@ def run():
 
             # Calcul des prédictions uniquement pour les modèles sélectionnées
             modelName_to_model = { "Lenet" : lenet, "VGG16" : vgg16, "EfficientNetB1" : effnet}
+            probas = {}
             preds = {}
             for model in models :
-                preds[model] = np.argmax(modelName_to_model[model].predict(image_processing(image_path, model)))
+                proba = modelName_to_model[model].predict(image_processing(image_path, model))
+                probas[model] = np.max(proba)
+                preds[model] = np.argmax(proba)
 
         # Affichage des prédictions
-        colA1, colB1, colC1 = st.columns([0.3, 0.3, 0.4])
+
+        colA1, colB1, colC1 = st.columns([0.25, 0.4, 0.35])
         with colA1:
             st.markdown("**Modèle**")
         with colB1:
@@ -145,25 +149,25 @@ def run():
         with colC1:
             st.markdown("Réalité :  **:blue[" + label + "]**")
                 
-        for pred in preds :
-            with st.container():
-                colA, colB, colC, colD = st.columns([0.3, 0.3, 0.2, 0.2])
-                with colA:
-                    st.markdown(pred)
-                with colB:
-                    st.markdown(id_to_clean_label[preds[pred]])
-                with colC:
-                    if (label == id_to_clean_label[preds[pred]]) :
-                        st.image(Image.open(path + "streamlit_app/assets/success.png"), output_format = "png")
-                        st.session_state[pred] += 1
-                        st.session_state[pred + "_Total"] += 1
-                    elif (label == "Inconnu (image importée)") :
-                        st.image(Image.open(path + "streamlit_app/assets/unknown.png"), output_format = "png")
-                    elif (label != id_to_clean_label[preds[pred]]) :
-                        st.image(Image.open(path + "streamlit_app/assets/fail.png"), output_format = "png")
-                        st.session_state[pred + "_Total"] += 1
-                with colD :
-                    st.write("**" + str(st.session_state[pred]) + "**/" + str(st.session_state[pred + "_Total"]))
+        for pred, proba in zip(preds, probas) :
+            colA, colB, colC, colD = st.columns([0.25, 0.4, 0.15, 0.2])
+            with colA:
+                st.markdown(pred)
+            with colB:
+                st.markdown(id_to_clean_label[preds[pred]] + " - _" + str(round(probas[proba]*100, 2)) + "%_")
+                st.markdown("#") 
+            with colC:
+                if (label == id_to_clean_label[preds[pred]]) :
+                    st.image(Image.open(path + "streamlit_app/assets/success.png"), output_format = "png")
+                    st.session_state[pred] += 1
+                    st.session_state[pred + "_Total"] += 1
+                elif (label == "Inconnu (image importée)") :
+                    st.image(Image.open(path + "streamlit_app/assets/unknown.png"), output_format = "png")
+                elif (label != id_to_clean_label[preds[pred]]) :
+                    st.image(Image.open(path + "streamlit_app/assets/fail.png"), output_format = "png")
+                    st.session_state[pred + "_Total"] += 1
+            with colD :
+                st.write("**" + str(st.session_state[pred]) + "**/" + str(st.session_state[pred + "_Total"]))
 
 
 
