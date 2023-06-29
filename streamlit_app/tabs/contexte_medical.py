@@ -23,12 +23,12 @@ def run():
             
         with st.expander("INFOGRAPHIE COVID-19 - Données OMS de janvier 2020 à juin 2023"):
                 def run():
-                    data = pd.read_csv('/Users/hind/Desktop/data_covid/world_data.csv')
+                    data = pd.read_csv(path + 'streamlit_app/data_covid/world_data.csv')
                     data = data.rename(columns={'Cumulative_cases' : 'Cas cumulés', 
                                                 'Cumulative_deaths' : 'Décès cumulés'})
                     data['Date'] = pd.to_datetime(data['Date'])
                     Countries = ['All_countries'] + list(data['Country'].unique())
-                    cases = pd.read_csv('/Users/hind/Desktop/data_covid/fr_new_cases.csv')
+                    cases = pd.read_csv(path + 'streamlit_app/data_covid/fr_new_cases.csv')
                     cases['Date'] = pd.to_datetime(cases['Date'])
 
                     # 1re LIGNE DE DATA
@@ -162,15 +162,15 @@ def run():
                 
         
         with col2 : 
-            image0 = Image.open('/Users/hind/Desktop/illustrations/blank.png')
+            image0 = Image.open(path + 'streamlit_app/assets/blank.png')
             st.image(image0, use_column_width=True)
-            image0 = Image.open('/Users/hind/Desktop/illustrations/blank.png')
+            image0 = Image.open(path + 'streamlit_app/assets/blank.png')
             st.image(image0, use_column_width=True)
-            image1 = Image.open('/Users/hind/Desktop/illustrations/fievre.png')
+            image1 = Image.open(path + 'streamlit_app/assets/fievre.png')
             st.image(image1, use_column_width=True)
-            image2 = Image.open('/Users/hind/Desktop/illustrations/toux.png')
+            image2 = Image.open(path + 'streamlit_app/assets/toux.png')
             st.image(image2, use_column_width=True)
-            image3 = Image.open('/Users/hind/Desktop/illustrations/dyspnee.png')
+            image3 = Image.open(path + 'streamlit_app/assets/dyspnee.png')
             st.image(image3, use_column_width=True)
        
 
@@ -193,7 +193,7 @@ def run():
     
         with col2 :
             st.markdown("\n\n\n")
-            image = Image.open('/Users/hind/Desktop/illustrations/rt_pcr.png')
+            image = Image.open(path + 'streamlit_app/assets/rt_pcr.png')
             st.image(image, use_column_width=True, width=100)
         
         st.markdown('\n\n\n')
@@ -219,7 +219,7 @@ def run():
         
         st.markdown('\n\n\n')
         
-        image = Image.open('/Users/hind/Desktop/illustrations/patho_pulmo.png')
+        image = Image.open(path + 'streamlit_app/assets/patho_pulmo.png')
         st.image(image, use_column_width=True, width=100)
         
         st.markdown('\n\n\n')
@@ -235,16 +235,16 @@ def run():
 
         with col[1]:
             if selected == 'Normal':
-                st.image('/Users/hind/Desktop/illustrations/radio_normal.png', width=500)
+                st.image(path + 'streamlit_app/assets/radio_normal.png', width=500)
 
             elif selected == 'COVID':
-                st.image('/Users/hind/Desktop/illustrations/radio_covid.png', width=500)
+                st.image(path + 'streamlit_app/assets/radio_covid.png', width=500)
                 
             elif selected == 'Pneumonie':
-                st.image('/Users/hind/Desktop/illustrations/radio_pneumonie.png', width=500)
+                st.image(path + 'streamlit_app/assets/radio_pneumonie.png', width=500)
 
             elif selected == 'Autre PP':
-                st.image('/Users/hind/Desktop/illustrations/radio_lung_opacity.png', width=500)
+                st.image(path + 'streamlit_app/assets/radio_lung_opacity.png', width=500)
 
 
 
