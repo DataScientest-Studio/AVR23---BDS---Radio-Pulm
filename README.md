@@ -4,57 +4,57 @@
 
 This repository contains the files needed to initialize a project for your [DataScientest](https://datascientest.com/) training.
 
-It contains mainly the present README.md file and an application template [Streamlit](https://streamlit.io/).
 
-**README**
+# Modèle de deep learning pour la détection de problèmes pulmonaires liés au COVID sur des radiographies
 
-The README.md file is a central element of any git repository. It allows you to present your project, its objectives, and to explain how to install and launch the project, or even how to contribute to it.
+Ce dépôt contient un modèle de deep learning entraîné pour la détection des problèmes pulmonaires liés au COVID sur des radiographies. Le modèle est capable de reconnaître les images de radiographies pulmonaires normales ainsi que les radiographies masquées.
 
-You will have to modify different sections of this README.md to include the necessary informations.
+Contenu
 
-- Complete the sections (`## Presentation and Installation` `## Streamlit App`) following the instructions in these sections.
-- Delete this section (`## Explanations and Instructions`)
+Ce dépôt est divisé en trois parties principales :
 
-**Streamlit Application**
 
-A [Streamlit] application template (https://streamlit.io/) is available in the [streamlit_app](streamlit_app) folder. You can use this template to start with your project.
 
-## Presentation and Installation
+    Partie données : Cette partie contient les données utilisées pour entraîner le modèle, y compris les images de radiographies pulmonaires normales et masquées.
 
-Complete this section with a brief description of your project, the context (including a link to the DataScientest course), and the objectives.
 
-You can also add a brief presentation of the team members with links to your respective networks (GitHub and/or LinkedIn for example).
 
-**Example:**
+    Partie Notebook : Cette partie contient les notebooks Jupyter utilisés pour préparer et entraîner le modèle.
 
-This repository contains the code for our project **PROJECT_NAME**, developed during our [Data Scientist training](https://datascientest.com/en/data-scientist-course) at [DataScientest](https://datascientest.com/).
 
-The goal of this project is to **...**
 
-This project was developed by the following team :
+    Partie Streamlit : Cette partie contient les codes nécessaires pour lancer l'application Streamlit qui permet de visualiser les résultats du modèle.
 
-- John Doe ([GitHub](https://github.com/) / [LinkedIn](http://linkedin.com/))
-- Martin Dupont ([GitHub](https://github.com/) / [LinkedIn](http://linkedin.com/))
 
-You can browse and run the [notebooks](./notebooks). 
 
-You will need to install the dependencies (in a dedicated environment) :
+Utilisation
 
+Pour utiliser ce modèle, voici les étapes à suivre :
+
+
+
+    Clonez le dépôt sur votre machine locale.
 ```
+git clone https://github.com/votre_nom_de_compte/nom_du_depot.git
+```
+
+
+
+Installez toutes les dépendances requises. Les dépendances sont répertoriées dans le fichier requirements.txt.
+
 pip install -r requirements.txt
+
+
+
+
+Lancez l'application Streamlit.
+```
+    streamlit run app.py
 ```
 
-## Streamlit App
 
-**Add explanations on how to use the app.**
 
-To run the app (be careful with the paths of the files in the app):
 
-```shell
-conda create --name my-awesome-streamlit python=3.9
-conda activate my-awesome-streamlit
-pip install -r requirements.txt
-streamlit run app.py
-```
+Crédits
 
-The app should then be available at [localhost:8501](http://localhost:8501).
+Ces modèles ont été développés par Benjamin Hind Joao et Nina, et sont basés sur le COVID-19_Radiography_Dataset de Université du Qatar. Si vous utilisez ces modèles dans votre travail de recherche, veuillez citer cette source.
