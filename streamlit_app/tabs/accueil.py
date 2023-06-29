@@ -21,7 +21,7 @@ def run():
     
     st.header("Démarche")
     st.markdown("""\n\n""")
-    image = Image.open('/Users/hind/Desktop/illustrations/methodo.png')
+    image = Image.open(path + 'streamlit_app/assets/methodo.png')
     st.image(image, use_column_width=True)
 
     
