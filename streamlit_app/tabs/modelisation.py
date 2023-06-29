@@ -12,7 +12,7 @@ title = 'Principes de Modélisation'
 sidebar_name = 'Principes de Modélisation'
 
 #path = "D://documents/GitHub/AVR23---BDS---Radio-Pulm/streamlit_app/assets/"
-path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
+path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/streamlit_app/assets/"
 
 def run():
 
@@ -58,7 +58,15 @@ def run():
                 - __Dense ‘ReLU’__ : couche qui absorbe une certaine non-linéarité, assurée par une fonction mathématique appelée _Rectified Linear Unit (ReLU)_.
                 - __Dropout__ : couche pour éviter le surapprentissage en réduisant le nombre de neurones.
                 - __Dense ‘softmax’__ : couche de sortie puisqu’il s’agit d’un problème de classification multi-classes. Dans le cas analysé, cette couche aura 4 unités, représentant le nombre de catégories étudiées.
+                
+                #
+
+                #
+
+                #
                 """)
+            
+            
             
         with tab2 : #Métriques
             st.markdown(
@@ -85,6 +93,15 @@ def run():
                 
             image = Image.open(path + 'early_stopping.png')
             st.image(image, caption = 'EarlyStopping', width = 700)
+
+            st.markdown(
+                """
+                #
+
+                #
+                
+                #
+                """)
         
         
         with tab3 : #Compilation & Entrainement des modèles
@@ -147,7 +164,6 @@ def run():
                 """)
             
             with st.expander("__Modèle VGG16__") :
-                st.markdown('<div style="text-align: justify;">Hello World!</div>', unsafe_allow_html=True)
                 
                 st.markdown(
                     """
@@ -203,6 +219,15 @@ def run():
                     table = pd.DataFrame({'Base Model' : ['EfficientNetB0','EfficientNetB1','EfficientNetB2','EfficientNetB3','EfficientNetB4','EfficientNetB5','EfficientNetB6','EfficientNetB7'], 'Resolution' : [224,240,260,300,380,456,528,600]})
                     st.dataframe(table)
             
+            st.markdown(
+                """
+                #
+
+                #
+                
+                #
+                """)
+            
         
         with tab3 : #KerasTuner
             st.markdown(
@@ -232,6 +257,15 @@ def run():
                 Pour l’étude menée dans cette analyse, nous avons choisis itérer sur un hyperparamètre d’algorithme : le __taux d’apprentissage__ (_learning rate_).
 
                 Un tuner _RandomSearch_ a été instancié pour effectuer l’hypertuning. Ce tuner est ensuite entraîné, en utilisant la méthode _Search_, et combiné avec un callback _EarlyStopping_. Après 3 trials, le modèle converge et désigne un _Adam learning_ rate qui maximise la précision du sous-échantillon de validation. À la suite de cela, nous construisons un nouveau modèle avec cette fois-ci l’hyperparamètre optimal défini précédemment. 
+                """)
+            
+            st.markdown(
+                """
+                #
+
+                #
+                
+                #
                 """)
             
             

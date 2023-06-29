@@ -6,23 +6,27 @@ import os
 import datetime
 import altair as alt
 
-title = "Contexte médical"
-sidebar_name = "Contexte médical"
+title = "Contexte Médical"
+sidebar_name = "Contexte Médical"
+
+# Emplacement à changer en local
+path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
 
 
 def run():
 
     st.title(title)
-    st.markdown("---")
+    st.divider()
+
     
     tab1, tab2, tab3 = st.tabs(['COVID-19', 'Détection', 'Radiologie'])
 
-    st.divider()
+    
 
     with tab1 : 
-            
-        with st.expander("INFOGRAPHIE COVID-19 - Données OMS de janvier 2020 à juin 2023"):
-                def run():
+           
+        with st.expander("**INFOGRAPHIE COVID-19 - Données OMS de janvier 2020 à juin 2023**"):
+                def run1():
                     data = pd.read_csv(path + 'streamlit_app/data_covid/world_data.csv')
                     data = data.rename(columns={'Cumulative_cases' : 'Cas cumulés', 
                                                 'Cumulative_deaths' : 'Décès cumulés'})
@@ -132,8 +136,8 @@ def run():
                         chart = bar_chart + line
                         
                         st.altair_chart(chart, use_container_width=True)
-                run()
-
+                run1()
+        
         col1, col2 = st.columns([5, 0.5])
 
         with col1 : 
@@ -157,7 +161,7 @@ def run():
             Les **cas graves** peuvent provoquer un **syndrome de détresse respiratoire aiguë (SDRA)** ou une **insuffisance respiratoire**, nécessitant une ventilation mécanique et des soins intensifs. 
             Les personnes **immunodéprimées** et **âgées** sont les plus à risque de développer des formes graves, pouvant aller jusqu'à une **défaillance cardiaque, rénale** ou un **choc septique**.
                         """)
-            image0 = Image.open('/Users/hind/Desktop/illustrations/radio_scan_covid.png')
+            image0 = Image.open(path + 'streamlit_app/assets/radio_scan_covid.png')
             st.image(image0, use_column_width=True, width=150)
                 
         
@@ -172,7 +176,12 @@ def run():
             st.image(image2, use_column_width=True)
             image3 = Image.open(path + 'streamlit_app/assets/dyspnee.png')
             st.image(image3, use_column_width=True)
-       
+
+        st.markdown("""
+            #
+            #
+            #
+            """)
 
     with tab2 :
         
@@ -184,11 +193,11 @@ def run():
             st.markdown("""
             La détection de la COVID-19 est un enjeu crucial, cependant, cela peut s'avérer difficile en raison de la **symptomatologie similaire à d'autres infections virales**. 
             La méthode de diagnostic actuellement privilégiée est la **RT-PCR**, mais elle présente des **limites** : 
-            \n - faux négatifs en cas de prélèvement inapproprié
-            \n - charge virale basse
-            \n - mutations génétiques 
-            \n - nécessité de laboratoires spécialisés
-            \n - délais de traitement des échantillons longs 
+            \n - Faux négatifs en cas de prélèvement inapproprié
+            \n - Charge virale basse
+            \n - Mutations génétiques 
+            \n - Nécessité de laboratoires spécialisés
+            \n - Délais de traitement des échantillons longs 
                         """)
     
         with col2 :
@@ -235,20 +244,24 @@ def run():
 
         with col[1]:
             if selected == 'Normal':
-                st.image(path + 'streamlit_app/assets/radio_normal.png', width=500)
+                image1 = Image.open(path + 'streamlit_app/assets/radio_normal.png')
 
             elif selected == 'COVID':
-                st.image(path + 'streamlit_app/assets/radio_covid.png', width=500)
+                image1 = Image.open(path + 'streamlit_app/assets/radio_covid.png')
                 
             elif selected == 'Pneumonie':
-                st.image(path + 'streamlit_app/assets/radio_pneumonie.png', width=500)
+                image1 = Image.open(path + 'streamlit_app/assets/radio_pneumonie.png')
 
             elif selected == 'Autre PP':
-                st.image(path + 'streamlit_app/assets/radio_lung_opacity.png', width=500)
+                image1 = Image.open(path + 'streamlit_app/assets/radio_lung_opacity.png')
+            st.image(image1)
 
+        st.markdown("""
+            #
+            #
+            #
+            """)
 
-
-run()
 
 
 
