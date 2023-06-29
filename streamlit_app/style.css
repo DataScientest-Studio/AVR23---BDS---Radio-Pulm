@@ -31,7 +31,7 @@ footer {
 /* Sidebar */
 
 section[data-testid="stSidebar"] > div {
-  background-color: #10b8dd;
+  background-color: #c5e2fd;
   padding-top: 2rem;
   padding-left: 1.5rem;
 }
@@ -45,7 +45,7 @@ section[data-testid="stSidebar"] button[kind="icon"] {
 }
 
 section[data-testid="stSidebar"] .st-bk {
-  background-color: white;
+  /*background-color: rgb(228, 22, 22);*/
 }
 
 section[data-testid="stSidebar"] .st-c0 {
@@ -54,12 +54,12 @@ section[data-testid="stSidebar"] .st-c0 {
 
 section[data-testid="stSidebar"] hr {
   margin-top: 30px;
-  border-color: white;
+  border-color: #10b8dd;
   width: 50px;
 }
 
 section[data-testid="stSidebar"] h2 {
-  color: white;
+  color: rgb(0, 0, 0);
 }
 
 /* Images */
@@ -83,3 +83,5 @@ section[tabindex="0"] .block-container {
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+/*# 10b8dd hr et stSidebar */

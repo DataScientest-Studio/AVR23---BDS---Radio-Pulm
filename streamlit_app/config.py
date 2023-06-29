@@ -7,18 +7,17 @@ Config file for Streamlit App
 from member import Member
 
 
-TITLE = "Catégorisation radios pulmoraires"
+TITLE = "Catégorisation radiographies pulmonaires"
 
 TEAM_MEMBERS = [
     Member(
         name="Hind",
-        linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
-        github_url="https://github.com/charlessutton",
+        linkedin_url="https://www.linkedin.com/in/hindcheraga/",
     ),
     Member(
         name="Joao",
-        linkedin_url="https://www.linkedin.com/in/charlessuttonprofile/",
-        github_url="https://github.com/charlessutton",
+        linkedin_url="https://www.linkedin.com/in/jvnietto/",
+        github_url="https://github.com/jvnietto",
     ),
     Member(
         name="Benjamin",
@@ -28,7 +27,6 @@ TEAM_MEMBERS = [
     Member(
         name="Nina",
         linkedin_url="https://www.linkedin.com/in/nina-lebrun-2b103485/",
-        github_url="https://github.com/charlessutton",
     )
 ]
 
