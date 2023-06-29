@@ -1,13 +1,8 @@
-# ProjectTemplate
-
-## Explanations and Instructions
-
-This repository contains the files needed to initialize a project for your [DataScientest](https://datascientest.com/) training.
-
-
 # Modèle de deep learning pour la détection de problèmes pulmonaires liés au COVID sur des radiographies
 
 Ce dépôt contient un modèle de deep learning entraîné pour la détection des problèmes pulmonaires liés au COVID sur des radiographies. Le modèle est capable de reconnaître les images de radiographies pulmonaires normales ainsi que les radiographies masquées.
+
+Ce projet est un projet d'étude lié à notre formation chez [DataScientest](https://datascientest.com/)
 
 Contenu
 
