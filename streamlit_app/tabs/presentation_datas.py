@@ -14,18 +14,22 @@ title = "Présentation des Données"
 sidebar_name = "Présentation des Données"
 
 # Emplacement
-#path = '/Users/hind/Documents/AVR23---BDS---Radio-Pulm/data/'
+#path = '/Users/hind/Documents/AVR23---BDS---Radio-Pulm/'
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
 
 # Constantes et dictionnaires
 colors = ["red", "yellow", "green", "orange"]
 category_order = ['COVID', 'Lung_Opacity', 'Normal', 'Viral Pneumonia']
 
+# Chargement dataframe à partir csv
+@st.cache_data
+def load_data():
+    df = pd.read_csv(path + "data/df.csv")
+    return df
+
 
 def run():
-    
-    df = load_data1(path + "data/df.csv")
-    #df = load_data()
+    df = load_data()
 
     st.title(title)
     st.markdown("---")
@@ -211,58 +215,3 @@ def run():
                 image = Image.open(PATH + str(number)+'.png')
                 st.image(image)
 
-
-### FONCTIONS APPELEES
-
-@st.cache_data
-#Fonction de chargement dataframe à partir csv
-def load_data1(url):
-    df = pd.read_csv(url)  # 👈 Download the data
-    return df
-
-
-
-
-# Fonction de concaténation des données et convertion ??? A SUPPRIMER ???
-@st.cache_data
-def load_data():
-    # Import des fichiers METADATA
-    df_covid = pd.read_excel(path + "data/COVID.metadata.xlsx")
-    df_lung_opacity = pd.read_excel(path + "data/Lung_Opacity.metadata.xlsx")
-    df_normal = pd.read_excel(path + "data/Normal.metadata.xlsx")
-    df_pneumonia = pd.read_excel(path + "data/Viral Pneumonia.metadata.xlsx")
-
-    # Création d'une colonne avec le label associé de chaque catégorie
-    df_covid['label'] = 'COVID'
-    df_lung_opacity['label'] = 'Lung_Opacity'
-    df_normal['label'] = 'Normal'
-    df_pneumonia['label'] = 'Viral Pneumonia'
-
-    df = pd.concat([df_covid, df_lung_opacity, df_normal, df_pneumonia], axis=0)
-
-    urls = list(df["URL"].unique())
-    source_order = ["KGL_RSNA_Pneumonia", "KGL_Chest_Xray_Pneumonia", "SIRM_Covid", "GitHub_covid_repo", "Eurorad", "GitHub_covid_CXNet", "GitHub_covid_chestray_ds", "Bimcv_covid19"]
-
-    df["source"] = df["URL"].replace(urls, source_order)
-    df["path"] = path + "data/" + df["label"] + "/" + "images" + "/" + df["FILE NAME"] + "." + df["FORMAT"].str.lower()
-    df = df.reset_index()
-    df["image"] = df["path"].map(lambda x: np.asarray(Image.open(x).convert("L").resize((75, 75))))
-
-    # Mesure d'intensités
-    im_mean = []
-    im_std = []
-    im_max = []
-    im_min = []
-
-    for i in range(0, len(df)):
-        im_mean.append(np.mean(df["image"][i]))
-        im_std.append(np.std(df["image"][i]))
-        im_max.append(np.max(df["image"][i]))
-        im_min.append(np.min(df["image"][i]))
-
-    df["im_mean"] = im_mean
-    df["im_std"] = im_std
-    df["im_max"] = im_max
-    df["im_min"] = im_min
-
-    return df
