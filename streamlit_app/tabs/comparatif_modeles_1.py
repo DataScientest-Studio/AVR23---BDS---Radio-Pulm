@@ -40,7 +40,12 @@ def run():
         st.session_state['VGG16_Total'] = 0
     if 'EfficientNetB1_Total' not in st.session_state :
         st.session_state['EfficientNetB1_Total'] = 0
-
+    if 'Resnet101' not in st.session_state :
+        st.session_state['Resnet101'] = 0
+    if 'Resnet101_Total' not in st.session_state :
+        st.session_state['Resnet101_Total'] = 0
+        
+        
     # Titre
     st.title(title)
     st.divider()
@@ -57,7 +62,7 @@ def run():
         with tab1:
 
             # Choix de catégorie
-            chosen_category = st.selectbox("Catégorie à reconnaître", ("Aucune","Peu importe !", "Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"))
+            chosen_category = st.selectbox("__Catégorie à reconnaître :__", ("Aucune","Peu importe !", "Normal", "COVID", "Lung_Opacity", "Viral Pneumonia"))
 
             # Choix image (selon catégorie)
             if chosen_category == "Peu importe !" :
@@ -85,7 +90,7 @@ def run():
             image_name_up = st.file_uploader("Importez une image", type=['png', 'jpeg', 'jpg'])
 
         #Choix des modèles
-        models = st.multiselect('Modèles à comparer',['Lenet', 'VGG16', 'EfficientNetB1'],['Lenet', 'VGG16', 'EfficientNetB1'])
+        models = st.multiselect('__Modèles à comparer :__',['Lenet', 'VGG16', 'EfficientNetB1','Resnet101'],['Lenet', 'VGG16', 'EfficientNetB1','Resnet101'])
         
         
     # Colonne d'affichage de l'image
@@ -96,7 +101,7 @@ def run():
         # Sinon récupération image choisie s'il y en a une
         else :
             if (image_name is not None) :
-                image_path = path + "data/" + category + "/images/" + image_name
+                image_path = path + "data/"+ category + "/images/" + image_name
 
         # Affichage image à prédire
         st.write(" ")
@@ -132,14 +137,18 @@ def run():
         # Calcul des prédictions :
         with st.spinner('Hmm, regardons cette radio...'):
             # Initialisation des modèles
-            lenet, vgg16, effnet = init_models()
+            lenet, vgg16, effnet, resnet101 = init_models()
 
             # Calcul des prédictions uniquement pour les modèles sélectionnées
-            modelName_to_model = { "Lenet" : lenet, "VGG16" : vgg16, "EfficientNetB1" : effnet}
+            modelName_to_model = { "Lenet" : lenet, "VGG16" : vgg16, "EfficientNetB1" : effnet, "Resnet101" : resnet101}
             probas = {}
             preds = {}
             for model in models :
-                proba = modelName_to_model[model].predict(image_processing(image_path, model))
+                print(model)
+                if (model == "Resnet101") :
+                    proba = eval(image_path)
+                else:
+                    proba = modelName_to_model[model].predict(image_processing(image_path, model))
                 probas[model] = np.max(proba)
                 preds[model] = np.argmax(proba)
 
@@ -203,7 +212,8 @@ def init_models() :
     lenet = init_lenet((256,256,1))
     vgg16 = init_vgg16()
     effnet = init_effnet((240,240,3))
-    return lenet, vgg16, effnet
+    resnet101 = init_resnet101()
+    return lenet, vgg16, effnet, resnet101
 
 
 # Fonction d'initialisation Le_net
@@ -282,6 +292,94 @@ def init_effnet(size) :
     model.compile(loss = "sparse_categorical_crossentropy", optimizer = "Adam", metrics = ["accuracy"])
     model.load_weights(path + "/data/models/model_efnet1_func2_2000im_30ep.h5")
     return model
+#############################################################################################################################################################    
+
+#PyTorch
+import torch
+import torch.nn as nn
+from torch import optim
+import torch.nn.functional as F
+torch.manual_seed(1)
+
+import torchvision
+from torchvision import transforms, models
+
+# data augmentation library
+#import albumentations as A
+#from albumentations.pytorch import ToTensorV2
+
+invNorm = transforms.Normalize(( -0.509/0.229 ),( 1/0.229))
+def displayTensorNorm(t):
+    trans = transforms.ToPILImage()
+    return trans(invNorm(t))
+
+normalize = transforms.Normalize(
+    mean=[0.509],
+    std=[0.229]
+)
+
+dataTransforms = transforms.Compose([
+    transforms.Grayscale(),
+    transforms.Resize((256, 256)),
+    transforms.ToTensor(),
+    normalize])
+
+def init_resnet101() :
+    resnet101 = torchvision.models.resnext101_32x8d(pretrained=False)
+    new_conv = nn.Conv2d(
+        in_channels=1,
+        out_channels=64,
+        kernel_size=7,
+        stride=2,
+        padding=3,
+        bias=False
+    )
+    resnet101.conv1 = new_conv
+    in_features = resnet101.fc.in_features
+    features = list(resnet101.fc.children())[:-1]
+    features.extend([nn.Linear(in_features,4),nn.LogSoftmax(dim=1)])
+    resnet101.fc = nn.Sequential(*features)
+    
+    resnet101.load_state_dict(torch.load(path+'/data/models/resnet_model.pth', map_location=torch.device('cpu')))
+    return resnet101
+    
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, dff, transform):
+        super(Dataset, self).__init__()
+        # Store the filenames and labels
+        self.samples = np.array([],dtype=int)
+        self.labels = np.array([],dtype=int)
+        self.samples = np.append(self.samples,dff)
+        self.labels = np.append(self.labels,4)
+        self.transform = transform
+        
+    def __len__(self):
+        return len(self.samples)
+    def __getitem__(self,i):
+        img = Image.open(self.samples[i])
+        # Return the image with the sample label or ID
+        return self.transform(img), self.labels[i]
+    
+def eval(dff):
+    testData = Dataset(dff,dataTransforms)
+    eval_dl = torch.utils.data.DataLoader(testData,batch_size=1,num_workers=0)
+    resnet101 = init_resnet101()
+    resnet101.eval()
+    probas=[]
+    for i, batch in enumerate(eval_dl):
+        with torch.no_grad():
+            x = batch[0]
+            y = resnet101(x)
+            print(y)            
+            prob = F.softmax(y, dim=1)
+            # Récupérer la probabilité pour chaque classe
+            proba=[]
+            proba.append( prob[0][0].item())
+            proba.append( prob[0][1].item())
+            proba.append( prob[0][2].item())
+            proba.append( prob[0][3].item())
+            probas.append(proba)
+    return probas
 
 # Fonction de comptage des scores
 @st.cache_resource

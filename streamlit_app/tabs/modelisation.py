@@ -1,5 +1,3 @@
-#https://docs.streamlit.io/
-
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -11,13 +9,15 @@ from PIL import Image
 title = 'Principes de Modélisation'
 sidebar_name = 'Principes de Modélisation'
 
-#path = "D://documents/GitHub/AVR23---BDS---Radio-Pulm/streamlit_app/assets/"
-path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/streamlit_app/assets/"
+path = "D://documents/GitHub/AVR23---BDS---Radio-Pulm/streamlit_app/assets/"
 
 def run():
 
+    st.markdown(
+        """
+        #
+        """)
     st.title(title)
-    
     st.divider()
           
     tab_main1, tab_main2 = st.tabs(["Généralités et Modalités d'Entrainement", "Architectures de Deep Learning"])
@@ -97,9 +97,7 @@ def run():
             st.markdown(
                 """
                 #
-
                 #
-                
                 #
                 """)
         

@@ -4,7 +4,8 @@ import streamlit as st
 from PIL import Image
 import config
 import torch
-from tabs import accueil, comparatif_modeles, test_par_modele, modelisation, contexte_medical, presentation_datas
+
+from tabs import accueil, comparatif_modeles_1, test_par_modele_1, modelisation, contexte_medical, presentation_datas, conclusion
 
 
 st.set_page_config(
@@ -12,11 +13,9 @@ st.set_page_config(
     page_icon="https://datascientest.com/wp-content/uploads/2020/03/cropped-favicon-datascientest-1-32x32.png",
 )
 
-# A CHANGER EN LOCAL !!
-path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
+path = "D://documents/GitHub/AVR23---BDS---Radio-Pulm/"
 
-
-with open(path + "streamlit_app/style.css", "r") as f:
+with open("C://Users/utilisateur/COVID19 - Projet/streamlit_app_final/style.css", "r") as f:
     style = f.read()
 
 
@@ -30,8 +29,9 @@ TABS = OrderedDict(
         (contexte_medical.sidebar_name, contexte_medical),
         (presentation_datas.sidebar_name, presentation_datas),
         (modelisation.sidebar_name, modelisation),
-        (test_par_modele.sidebar_name, test_par_modele),
-        (comparatif_modeles.sidebar_name, comparatif_modeles),
+        (test_par_modele_1.sidebar_name, test_par_modele_1),
+        (comparatif_modeles_1.sidebar_name, comparatif_modeles_1),
+        (conclusion.sidebar_name, conclusion),
     ]
 )
 

@@ -31,7 +31,7 @@ footer {
 /* Sidebar */
 
 section[data-testid="stSidebar"] > div {
-  background-color: #c5e2fd;
+  background-color: #5FB2D6;
   padding-top: 2rem;
   padding-left: 1.5rem;
 }
@@ -45,7 +45,7 @@ section[data-testid="stSidebar"] button[kind="icon"] {
 }
 
 section[data-testid="stSidebar"] .st-bk {
-  /*background-color: rgb(228, 22, 22);*/
+  background-color: none;
 }
 
 section[data-testid="stSidebar"] .st-c0 {
@@ -54,7 +54,7 @@ section[data-testid="stSidebar"] .st-c0 {
 
 section[data-testid="stSidebar"] hr {
   margin-top: 30px;
-  border-color: #10b8dd;
+  border-color: #003B54;
   width: 50px;
 }
 
@@ -73,7 +73,7 @@ button[title="View fullscreen"] {
 hr {
   width: 200px;
   border-width: 5px;
-  border-color: #10b8dd;
+  border-color: #003B54;
   margin-top: 0px;
 }
 

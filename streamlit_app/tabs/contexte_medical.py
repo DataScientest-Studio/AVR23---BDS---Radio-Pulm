@@ -10,18 +10,19 @@ title = "Contexte Médical"
 sidebar_name = "Contexte Médical"
 
 # Emplacement à changer en local
-path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
+path = "D://documents/GitHub/AVR23---BDS---Radio-Pulm/"
 
 
 def run():
 
+    st.markdown(
+        """
+        #
+        """)
     st.title(title)
     st.divider()
 
-    
     tab1, tab2, tab3 = st.tabs(['COVID-19', 'Détection', 'Radiologie'])
-
-    
 
     with tab1 : 
            
@@ -138,44 +139,46 @@ def run():
                         st.altair_chart(chart, use_container_width=True)
                 run1()
         
-        col1, col2 = st.columns([5, 0.5])
-
-        with col1 : 
-            st.subheader("COVID-19")
-            st.markdown("""
+        st.markdown("#### COVID-19")
+        st.markdown(
+            """
             La COVID-19, déclarée par l'OMS en tant que pandémie mondiale, est un **syndrome respiratoire aigu** apparu en décembre 2019. 
             Elle a déjà entraîné près de **7 millions** de décès et infecté plus de **770 millions** de personnes jusqu'au mois de juin 2023. 
-                        """)
-            st.markdown("""
-            Les symptômes courants comprennent : 
-            \n - fièvre
-            \n - toux
-            \n - dyspnée (difficulté respiratoire)
-            \n - anomalies pulmonaires à l'imagerie
-                        """)
+            """)
             
-            st.markdown('\n\n\n')
-            st.markdown('\n\n\n')
+        col1, col2 = st.columns([0.9, 0.1])
 
-            st.markdown("""
+        with col1 :    
+            st.markdown(
+                """
+                Les symptômes courants comprennent : 
+                - Fièvre
+                - Toux
+                - Dyspnée (difficulté respiratoire)
+                - Anomalies pulmonaires à l'imagerie
+                """)
+
+        with col2 :
+            width = 40
+            image1 = Image.open(path + 'streamlit_app/assets/fievre.png')
+            st.image(image1, width = width)
+            image2 = Image.open(path + 'streamlit_app/assets/toux.png')
+            st.image(image2, width = width)
+            image3 = Image.open(path + 'streamlit_app/assets/dyspnee.png')
+            st.image(image3, width = width)    
+            
+        st.markdown("""
+            #           
+            """)
+        
+        st.markdown(
+            """
             Les **cas graves** peuvent provoquer un **syndrome de détresse respiratoire aiguë (SDRA)** ou une **insuffisance respiratoire**, nécessitant une ventilation mécanique et des soins intensifs. 
             Les personnes **immunodéprimées** et **âgées** sont les plus à risque de développer des formes graves, pouvant aller jusqu'à une **défaillance cardiaque, rénale** ou un **choc septique**.
-                        """)
-            image0 = Image.open(path + 'streamlit_app/assets/radio_scan_covid.png')
-            st.image(image0, use_column_width=True, width=150)
+            """)
+        image0 = Image.open(path + 'streamlit_app/assets/radio_scan_covid.png')
+        st.image(image0, use_column_width=True, width=150)
                 
-        
-        with col2 : 
-            image0 = Image.open(path + 'streamlit_app/assets/blank.png')
-            st.image(image0, use_column_width=True)
-            image0 = Image.open(path + 'streamlit_app/assets/blank.png')
-            st.image(image0, use_column_width=True)
-            image1 = Image.open(path + 'streamlit_app/assets/fievre.png')
-            st.image(image1, use_column_width=True)
-            image2 = Image.open(path + 'streamlit_app/assets/toux.png')
-            st.image(image2, use_column_width=True)
-            image3 = Image.open(path + 'streamlit_app/assets/dyspnee.png')
-            st.image(image3, use_column_width=True)
 
         st.markdown("""
             #
@@ -188,57 +191,65 @@ def run():
         col1, col2 = st.columns([4, 2.5])
         
         with col1 :
-            st.subheader("Outils de détection")
+            st.markdown("#### Outils de détection")
             
-            st.markdown("""
-            La détection de la COVID-19 est un enjeu crucial, cependant, cela peut s'avérer difficile en raison de la **symptomatologie similaire à d'autres infections virales**. 
-            La méthode de diagnostic actuellement privilégiée est la **RT-PCR**, mais elle présente des **limites** : 
-            \n - Faux négatifs en cas de prélèvement inapproprié
-            \n - Charge virale basse
-            \n - Mutations génétiques 
-            \n - Nécessité de laboratoires spécialisés
-            \n - Délais de traitement des échantillons longs 
-                        """)
+            st.markdown(
+                """
+                La détection de la COVID-19 est un enjeu crucial, cependant, cela peut s'avérer difficile en raison de la **symptomatologie similaire à d'autres infections virales**. 
+                La méthode de diagnostic actuellement privilégiée est la **RT-PCR**, mais elle présente des **limites** : 
+                - Faux négatifs en cas de prélèvement inapproprié.
+                - Charge virale basse.
+                - Mutations génétiques. 
+                - Nécessité de laboratoires spécialisés.
+                - Délais de traitement des échantillons longs. 
+                """)
     
         with col2 :
-            st.markdown("\n\n\n")
+            st.markdown("""
+            #
+            """)
+            
             image = Image.open(path + 'streamlit_app/assets/rt_pcr.png')
-            st.image(image, use_column_width=True, width=100)
-        
-        st.markdown('\n\n\n')
-        st.markdown('\n\n\n')
+            st.image(image, use_column_width=True)
         
         st.markdown("""
-        Malgré leurs performances supérieures, les **scanners** présentent certains inconvénients : leur **sensibilité est limitée aux premiers stades de la COVID-19**, nécessitant plus de **temps** et **exposant** à une dose plus élevée de rayonnements.
-        \n Les **radiographies** sont par conséquent plus souvent utilisées comme **premier outil de dépistage** : plus **simples**, plus **rapides** et **moins coûteuses**. 
-                    """)    
+            #
+            """)
+        
+        st.markdown(
+            """
+            Malgré leurs performances supérieures, les **scanners** présentent certains inconvénients : leur **sensibilité est limitée aux premiers stades de la COVID-19**, nécessitant plus de **temps** et **exposant** à une dose plus élevée de rayonnements.
+            
+            Les **radiographies** sont par conséquent plus souvent utilisées comme **premier outil de dépistage** : plus **simples**, plus **rapides** et **moins coûteuses**. 
+            """)    
     
     with tab3 :
-        st.subheader("Notions de radiologie et signes")
+        st.markdown("#### Notions de radiologie et signes")
         
-        st.markdown("""
-        Pour rappel, en radiologie, tout ce qui est opaque aux rayons X apparait **blanc** (tissu, liquide : on parle d’**opacité**) et le reste apparait **noir** (air : on parle de **clarté**). 
-        On peut distinguer plusieurs niveaux radiologiques selon la distribution des lésions : 
-        \n - **Alvéolaire** (opacité systématisée (pneumonie) ou floues et confluentes (OAP))
-        \n - **Nodulaire** (opacités arrondies)
-        \n - **Interstitiel** (opacités diffuses ou localisée, miliaires (tuberculose))
-        \n - **Bronchique** (opacité systématisée et homogène)
-        \n - **Pleural** (épanchement liquidien)
-                    """)
-        
-        st.markdown('\n\n\n')
+        st.markdown(
+            """
+            Pour rappel, en radiologie, tout ce qui est opaque aux rayons X apparait **blanc** (_tissu_, _liquide_ : on parle d’**opacité**) et le reste apparait **noir** (_air_ : on parle de **clarté**). 
+            
+            On peut distinguer plusieurs niveaux radiologiques selon la distribution des lésions : 
+            - **Alvéolaire** : opacité systématisée (pneumonie) ou floues et confluentes (OAP).
+            - **Nodulaire** : opacités arrondies.
+            - **Interstitiel** : opacités diffuses ou localisée, miliaires (tuberculose).
+            - **Bronchique** : opacité systématisée et homogène.
+            - **Pleural** : épanchement liquidien.
+            """)
         
         image = Image.open(path + 'streamlit_app/assets/patho_pulmo.png')
         st.image(image, use_column_width=True, width=100)
+              
+        st.markdown("""
+            #
+            """)
         
-        st.markdown('\n\n\n')
-        st.markdown('\n\n\n')
-       
         col = st.columns([2,4])
 
         with col[0]:
             selected = st.radio(
-                "Selectionnez une radio",
+                "__Selectionnez une catégorie :__",
                 options=["Normal", "COVID", "Pneumonie", "Autre PP"]
             )
 
