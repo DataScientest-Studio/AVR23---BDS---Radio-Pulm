@@ -3,7 +3,7 @@ from collections import OrderedDict
 import streamlit as st
 from PIL import Image
 import config
-
+import torch
 from tabs import accueil, comparatif_modeles, test_par_modele, modelisation, contexte_medical, presentation_datas
 
 
@@ -14,6 +14,7 @@ st.set_page_config(
 
 # A CHANGER EN LOCAL !!
 path = "C:/Users/Nina/Documents/GitHub/AVR23---BDS---Radio-Pulm/"
+
 
 with open(path + "streamlit_app/style.css", "r") as f:
     style = f.read()
