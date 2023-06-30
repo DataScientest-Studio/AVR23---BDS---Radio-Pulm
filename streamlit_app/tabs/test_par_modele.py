@@ -12,6 +12,7 @@ from tensorflow.keras.applications import EfficientNetB1
 from tensorflow.keras.applications.vgg16 import VGG16
 
 
+
 title = "Test par Modèle"
 sidebar_name = "Test par Modèle"
 
@@ -32,8 +33,10 @@ def run():
     st.divider()
     colA, colB, colC= st.columns((0.4,0.1,0.4))
     with colA:
-        model_name = st.selectbox("Sélection du modèle", ['Lenet', 'VGG16', 'EfficientNetB1'], index = 2 )
+        model_name = st.selectbox("Sélection du modèle", ['Lenet', 'VGG16', 'EfficientNetB1','resnext101'], index = 2 )
         if (model_name == "EfficientNetB1") :
+            grad_cam_On = st.checkbox("Afficher GradCam", value = True)
+        if (model_name == "resnext101") :
             grad_cam_On = st.checkbox("Afficher GradCam", value = True)
     with colC:
         image_type =st.radio("Type d'images", ("Images brutes", "Images masquées (poumons uniquement)"))
@@ -64,7 +67,10 @@ def run():
         model = init_model(model_name, image_type_repo[image_type])
 
         # Calcul prédictions pour toute les images
-        df["probas"] = df["filepath"].apply(lambda x : model.predict(image_processing(x, model_name)))
+        if (model_name == "resnext101") :
+            df["probas"] = eval(df["filepath"],image_type)
+        else:
+            df["probas"] = df["filepath"].apply(lambda x : model.predict(image_processing(x, model_name)))
         df["proba"]= df["probas"].apply(lambda x : np.max(x))
         df["predicted"]= df["probas"].apply(lambda x : id_to_label[np.argmax(x)])
 
@@ -117,6 +123,8 @@ def init_model(model, image_type) :
         return init_vgg16((size_per_model["VGG16"],size_per_model["VGG16"],color_per_model["VGG16"]), image_type)
     if (model == 'EfficientNetB1') :
         return init_effnet((size_per_model["EfficientNetB1"],size_per_model["EfficientNetB1"],color_per_model["EfficientNetB1"]), image_type)
+    if (model == 'resnext101') :
+        return init_resnext101(image_type)
     
 # Fonction de processing des images pour prédiction
 def image_processing(image_path, modelName):
@@ -324,3 +332,100 @@ def VizGradCAM(model, image, interpolant=0.5, plot_results=True):
         return(np.uint8(original_img * interpolant + cvt_heatmap * (1 - interpolant)))
     else:
         return cvt_heatmap
+    
+#############################################################################################################################################################    
+
+#PyTorch
+import torch
+import torch.nn as nn
+from torch import optim
+import torch.nn.functional as F
+torch.manual_seed(1)
+
+import torchvision
+from torchvision import transforms, models
+
+
+# data augmentation library
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
+
+invNorm = transforms.Normalize(( -0.509/0.229 ),( 1/0.229))
+def displayTensorNorm(t):
+    trans = transforms.ToPILImage()
+    return trans(invNorm(t))
+
+normalize = transforms.Normalize(
+    mean=[0.509],
+    std=[0.229]
+)
+
+dataTransforms = transforms.Compose([
+    transforms.Grayscale(),
+    transforms.Resize((256, 256)),
+    transforms.ToTensor(),
+    normalize])
+
+def init_resnext101(image_type) :
+
+    model = torchvision.models.resnext101_32x8d(pretrained=False)
+    new_conv = nn.Conv2d(
+        in_channels=1,
+        out_channels=64,
+        kernel_size=7,
+        stride=2,
+        padding=3,
+        bias=False
+    )
+    model.conv1 = new_conv
+    in_features = model.fc.in_features
+    features = list(model.fc.children())[:-1]
+    features.extend([nn.Linear(in_features,4),nn.LogSoftmax(dim=1)])
+    model.fc = nn.Sequential(*features)
+    
+    if (image_type== "Images masquées (poumons uniquement)"):
+        model.load_state_dict(torch.load(path+'/data/models/resnet_model_mask.pth'))
+    else:
+        model.load_state_dict(torch.load(path+'/data/models/resnet_model.pth'))
+    return model
+    
+class Dataset(torch.utils.data.Dataset):
+    def __init__(self, dff, transform):
+        super(Dataset, self).__init__()
+        # Store the filenames and labels
+        self.samples = np.array([],dtype=int)
+        self.labels = np.array([],dtype=int)
+        for filename in dff:
+            self.samples = np.append(self.samples,filename)
+            self.labels = np.append(self.labels,4)
+        self.transform = transform
+        
+    def __len__(self):
+        return len(self.samples)
+    def __getitem__(self,i):
+        img = Image.open(self.samples[i])
+        # Return the image with the sample label or ID
+        return self.transform(img), self.labels[i]
+    
+def eval(dff,image_type):
+    testData = Dataset(dff,dataTransforms)
+    eval_dl = torch.utils.data.DataLoader(testData,batch_size=1,num_workers=0)
+    model = init_resnext101(image_type)
+    model.eval()
+    probas=[]
+    for i, batch in enumerate(eval_dl):
+        with torch.no_grad():
+            x = batch[0]
+            y = model(x)
+            print(y)            
+            prob = F.softmax(y, dim=1)
+            # Récupérer la probabilité pour chaque classe
+            proba=[]
+            proba.append( prob[0][0].item())
+            proba.append( prob[0][1].item())
+            proba.append( prob[0][2].item())
+            proba.append( prob[0][3].item())
+            probas.append(proba)
+    return probas
+
+
